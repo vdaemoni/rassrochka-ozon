@@ -16,6 +16,12 @@ func main() {
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Print("Text to send: ")
 		text, _ := reader.ReadString('\n')
+		fmt.Println(text)
+		if text == "exit" {
+			fmt.Println("here")
+			conn.Close()
+			os.Exit(0)
+		}
 		// Отправляем в socket
 		fmt.Fprintf(conn, text+"\n")
 		// Прослушиваем ответ

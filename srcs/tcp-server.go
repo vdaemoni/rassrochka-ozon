@@ -47,16 +47,14 @@ func del(cmd []string, elements map[string]string, conn net.Conn) {
 
 func main() {
 
-	// var cursor, head *Element
 	fmt.Println("Launching server...")
-	// Устанавливаем прослушивание порта
+	
 	ln, _ := net.Listen("tcp", ":8081")
-	// Открываем порт
 	conn, _ := ln.Accept()
 
-	elements = make(map[string]string)
-
 	fmt.Println("Listening to commands...")
+
+	elements = make(map[string]string)
 
 	for {
 		// Будем прослушивать все сообщения разделенные \n
@@ -72,12 +70,9 @@ func main() {
 			get(words, elements, conn)
 		case "del":
 			del(words, elements, conn)
-		case "exit":
-			fmt.Printf("disconnect user")
 		default:
 			conn.Write([]byte("parsing error!"))
 		}
-
 		conn.Write([]byte("\n"))
 	}
 }
