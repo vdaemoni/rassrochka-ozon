@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -13,12 +14,12 @@ func main() {
 	conn, _ := net.Dial("tcp", "127.0.0.1:8081")
 	for {
 		// Чтение входных данных от stdin
-		reader := bufio.NewReader(os.Stdin)
 		fmt.Print("Text to send: ")
+		reader := bufio.NewReader(os.Stdin)
 		text, _ := reader.ReadString('\n')
-		fmt.Println(text)
+		text = strings.TrimSpace(text)
 		if text == "exit" {
-			fmt.Println("here")
+			fmt.Println("bye!")
 			conn.Close()
 			os.Exit(0)
 		}

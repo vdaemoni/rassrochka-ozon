@@ -52,14 +52,13 @@ func main() {
 	ln, _ := net.Listen("tcp", ":8081")
 	conn, _ := ln.Accept()
 
-	fmt.Println("Listening to commands...")
-
 	elements = make(map[string]string)
-
-	for {
+	
+	for {		
+		fmt.Println("Listening to commands...")
 		// Будем прослушивать все сообщения разделенные \n
 		message, _ := bufio.NewReader(conn).ReadString('\n')
-		fmt.Printf("Message Received: %s\n", message)
+		fmt.Printf("Message Received: %s", message)
 
 		// Парсер для полученной команды
 		words := strings.Fields(message)
