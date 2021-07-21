@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"net"
 	"strings"
+	"strconv"
+	"os"
 )
 
+var mapSize int
 var elements map[string]string
 
 func set(cmd []string, elements map[string]string, conn net.Conn) {
@@ -45,14 +48,27 @@ func del(cmd []string, elements map[string]string, conn net.Conn) {
 	return
 }
 
+func mapSizing() int {
+	fmt.Print("Enter the DB size: ")
+	reader := bufio.NewReader(os.Stdin)
+	text, _ := reader.ReadString('\n')
+	text = strings.TrimSpace(text)
+	result, _ := strconv.Atoi(text)
+	if result == 0 {
+		fmt.Println("WARNING! Null-sized DB will be created")
+	}
+	return result
+}
+
 func main() {
 
-	fmt.Println("Launching server...")
+	mapSize = mapSizing()
 	
+	fmt.Println("Launching server...")
 	ln, _ := net.Listen("tcp", ":8081")
 	conn, _ := ln.Accept()
-
-	elements = make(map[string]string)
+	
+	elements = make(map[string]string, mapSize)
 	
 	for {		
 		fmt.Println("Listening to commands...")
