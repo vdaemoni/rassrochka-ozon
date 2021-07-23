@@ -13,6 +13,10 @@ var mapSize int
 var elements map[string]string
 
 func set(cmd []string, elements map[string]string, conn net.Conn) {
+	if len(elements) >= mapSize {
+		conn.Write([]byte("Error! DB limit was reached"))
+		return
+	}
 	switch {
 	case len(cmd) > 3:
 		conn.Write([]byte("Too many arguments!\nUsage: set <key> <value>"))
