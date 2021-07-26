@@ -77,7 +77,7 @@ func main() {
 
 	var err error
 	mapSize = mapSizing()
-	
+
 	fmt.Println("Launching server...")
 	ln, err := net.Listen("tcp", ":8081")
 	if err != nil {
@@ -89,8 +89,8 @@ func main() {
 	}
 
 	elements = make(map[string]string, mapSize)
-	
-	for {		
+
+	for {
 		fmt.Println("Listening to commands...")
 		// Будем прослушивать все сообщения разделенные \n
 		message, err := bufio.NewReader(conn).ReadString('\n')
@@ -108,8 +108,6 @@ func main() {
 			get(words, elements, conn)
 		case "del":
 			del(words, elements, conn)
-		case "":
-			conn.Write([]byte("Usage: del <key>"))
 		default:
 			conn.Write([]byte("parsing error!"))
 		}
