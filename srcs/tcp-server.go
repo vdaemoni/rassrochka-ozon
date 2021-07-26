@@ -3,10 +3,11 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"net"
-	"strings"
-	"strconv"
 	"os"
+	"strconv"
+	"strings"
 )
 
 var mapSize int
@@ -53,11 +54,19 @@ func del(cmd []string, elements map[string]string, conn net.Conn) {
 }
 
 func mapSizing() int {
+	var err error
+
 	fmt.Print("Enter the DB size: ")
 	reader := bufio.NewReader(os.Stdin)
-	text, _ := reader.ReadString('\n')
+	text, err := reader.ReadString('\n')
+	if err != nil {
+		log.Fatalf("Unable to read from stdin: %s", err)
+	}
 	text = strings.TrimSpace(text)
-	result, _ := strconv.Atoi(text)
+	result, err := strconv.Atoi(text)
+	if err != nil {
+		log.Fatalf("Error while converting string to an int: %s", err)
+	}
 	if result == 0 {
 		fmt.Println("WARNING! Null-sized DB will be created")
 	}
@@ -66,18 +75,28 @@ func mapSizing() int {
 
 func main() {
 
+	var err error
 	mapSize = mapSizing()
 	
 	fmt.Println("Launching server...")
-	ln, _ := net.Listen("tcp", ":8081")
-	conn, _ := ln.Accept()
-	
+	ln, err := net.Listen("tcp", ":8081")
+	if err != nil {
+		log.Fatalf("Unable to launch the server: %s", err)
+	}
+	conn, err := ln.Accept()
+	if err != nil {
+		log.Fatalf("Unable to connect a client: %s", err)
+	}
+
 	elements = make(map[string]string, mapSize)
 	
 	for {		
 		fmt.Println("Listening to commands...")
 		// Будем прослушивать все сообщения разделенные \n
-		message, _ := bufio.NewReader(conn).ReadString('\n')
+		message, err := bufio.NewReader(conn).ReadString('\n')
+		if err != nil {
+			log.Fatalf("Unable to read from stdin: %s", err)
+		}
 		fmt.Printf("Message Received: %s", message)
 
 		// Парсер для полученной команды
@@ -89,6 +108,8 @@ func main() {
 			get(words, elements, conn)
 		case "del":
 			del(words, elements, conn)
+		case "":
+			conn.Write([]byte("Usage: del <key>"))
 		default:
 			conn.Write([]byte("parsing error!"))
 		}
